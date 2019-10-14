@@ -1,0 +1,53 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-application
+  labels:
+    app: my-application
+  annotations:
+    prometheus.io/scrape: 'true'
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-application
+  template:
+    metadata:
+      labels:
+        app: my-application
+      annotations:
+        prometheus.io/scrape: 'true'
+    spec:
+      containers:
+        - name: my-application
+          image: walterdolce/my-cd-pipeline-application:1
+          env:
+            - name: AWS_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: aws_access_key
+                  name: aws-secrets
+            - name: AWS_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: aws_secret_key
+                  name: aws-secrets
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-application
+  labels:
+    app: my-application
+  annotations:
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    - name: webserver-port
+      port: 8000
+      targetPort: 8000
+  selector:
+    app: my-application
+  type: LoadBalancer

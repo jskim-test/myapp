@@ -1,0 +1,7 @@
+.idea/
+.terraform/
+service-account-key.json
+terraform.*
+docker-hub-password.txt
+docker-compose.yml
+concourse-parameters.yml
